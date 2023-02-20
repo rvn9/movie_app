@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movie_app/widget/chip_widget.dart';
 
+import '../model/movie.dart';
+
 class CardWidget extends StatelessWidget {
   const CardWidget({
     Key? key,
@@ -10,9 +12,8 @@ class CardWidget extends StatelessWidget {
     this.icon,
     this.leading,
     this.leadingBackgroundColor,
-    this.title,
-    this.subtitle,
     this.onTap,
+    required this.genres,
   }) : super(key: key);
 
   final String? titleText;
@@ -20,9 +21,8 @@ class CardWidget extends StatelessWidget {
   final Widget? icon;
   final Widget? leading;
   final Color? leadingBackgroundColor;
-  final Widget? title;
-  final Widget? subtitle;
   final Function()? onTap;
+  final List<Genres> genres;
 
   @override
   Widget build(BuildContext context) {
@@ -39,68 +39,63 @@ class CardWidget extends StatelessWidget {
           side: const BorderSide(color: Color(0xffe1e3e6), width: 1.0),
         ),
         child: ListTile(
-          onTap: onTap,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12.0,
-            vertical: 6.0,
-          ),
-          leading: AspectRatio(
-            aspectRatio: 4 / 8,
-            child: leading ??
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: ColoredBox(
-                    color: leadingBackgroundColor ?? const Color(0xFFFFB74D),
-                    child: icon ?? const SizedBox.shrink(),
+            onTap: onTap,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 6.0,
+            ),
+            leading: AspectRatio(
+              aspectRatio: 4 / 8,
+              child: leading ??
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: ColoredBox(
+                      color: leadingBackgroundColor ?? const Color(0xFFFFB74D),
+                      child: icon ?? const SizedBox.shrink(),
+                    ),
+                  ),
+            ),
+            title: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                titleText ?? '',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: const Color(0xff404d61),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.sp,
+                ),
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  subtitleText ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: const Color(0xff757d8a),
+                    fontSize: 16.sp,
                   ),
                 ),
-          ),
-          title: title ??
-              (titleText != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(
-                        titleText,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: const Color(0xff404d61),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                        ),
+                const SizedBox(
+                  height: 8,
+                ),
+                if (genres.isNotEmpty) ...[
+                  SizedBox(
+                    height: 50.sp,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: genres.length,
+                      itemBuilder: (context, index) => IconChipWidget(
+                        label: getGenres(genres[index]),
                       ),
-                    )
-                  : const SizedBox()),
-          subtitle: subtitle ??
-              (subtitleText != null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          subtitleText,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: const Color(0xff757d8a),
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        SizedBox(
-                          height: 50.sp,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              IconChipWidget(label: 'Horror'),
-                              IconChipWidget(label: 'Horror'),
-                              IconChipWidget(label: 'Horror'),
-                            ],
-                          ),
-                        )
-                      ],
-                    )
-                  : const SizedBox()),
-        ),
+                    ),
+                  )
+                ]
+              ],
+            )),
       ),
     );
   }

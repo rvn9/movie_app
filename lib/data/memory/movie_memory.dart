@@ -1,32 +1,40 @@
 import 'package:mobx/mobx.dart';
-import 'package:movie_app/model/movie.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../model/movie.dart';
 
 class MovieMemory {
   final _movies = ObservableList<Movie>.of([
     Movie(
-        id: Uuid().v4(),
-        title: "ini film apaya",
-        director: 'jono',
-        sumary: 'bagus dah',
-        genres: Genres.action),
+      id: const Uuid().v4(),
+      title: 'Titanic',
+      director: 'James Titanic',
+      sumary: 'Kapal tenggelam',
+      genres: [Genres.drama],
+    ),
     Movie(
-        id: Uuid().v4(),
-        title: "ini film",
-        director: 'joko',
-        sumary: 'bagus dah',
-        genres: Genres.action),
+      id: const Uuid().v4(),
+      title: 'Avengers',
+      director: 'Avenge Sevenfold',
+      sumary: 'Petualangan melawan monster',
+      genres: [Genres.action],
+    ),
     Movie(
-        id: Uuid().v4(),
-        title: "bukan film",
-        director: 'juju',
-        sumary: 'bagus dah',
-        genres: Genres.action),
+      id: const Uuid().v4(),
+      title: 'Scary Movie ',
+      director: 'James Scary',
+      sumary: 'Scarry banget bossss',
+      genres: [Genres.horror],
+    )
   ]);
+
+  final _searchMovies = ObservableList<Movie>.of([]);
 
   static MovieMemory create() => MovieMemory();
 
   ObservableList<Movie> get movies => _movies;
+
+  ObservableList<Movie> get searchMovies => _searchMovies;
 
   void add(Movie movie) {
     _movies.add(movie);
@@ -49,7 +57,9 @@ class MovieMemory {
     _movies.clear();
   }
 
-  List<Movie> search(String title) {
-    return _movies.where((element) => element.title == title).toList();
+  void search(String title) {
+    _searchMovies.clear();
+    _searchMovies.addAll(_movies
+        .where((element) => element.title.toLowerCase().contains(title)));
   }
 }

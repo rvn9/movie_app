@@ -14,8 +14,9 @@
 import 'package:auto_route/auto_route.dart' as _i4;
 import 'package:auto_route/empty_router_widgets.dart' as _i1;
 import 'package:flutter/material.dart' as _i5;
-import 'package:movie_app/pages/add_movie_page.dart' as _i2;
+import 'package:movie_app/model/movie.dart' as _i6;
 import 'package:movie_app/pages/main_page.dart' as _i3;
+import 'package:movie_app/pages/movie_detail_page.dart' as _i2;
 
 class AppRouters extends _i4.RootStackRouter {
   AppRouters([_i5.GlobalKey<_i5.NavigatorState>? navigatorKey])
@@ -30,10 +31,15 @@ class AppRouters extends _i4.RootStackRouter {
         opaque: true,
       );
     },
-    AddMoviePageRoute.name: (routeData) {
+    MovieDetailPageRoute.name: (routeData) {
+      final args = routeData.argsAs<MovieDetailPageRouteArgs>();
       return _i4.AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const _i2.AddMoviePage(),
+        child: _i2.MovieDetailPage(
+          key: args.key,
+          movie: args.movie,
+          addMovie: args.addMovie,
+        ),
         opaque: true,
       );
     },
@@ -58,15 +64,15 @@ class AppRouters extends _i4.RootStackRouter {
               parent: MainPageRouter.name,
             ),
             _i4.RouteConfig(
-              AddMoviePageRoute.name,
-              path: 'add_movie',
+              MovieDetailPageRoute.name,
+              path: 'add_movie/:movie',
               parent: MainPageRouter.name,
             ),
           ],
         ),
         _i4.RouteConfig(
-          AddMoviePageRoute.name,
-          path: 'add_movie',
+          MovieDetailPageRoute.name,
+          path: 'add_movie/:movie',
         ),
       ];
 }
@@ -85,15 +91,54 @@ class MainPageRouter extends _i4.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i2.AddMoviePage]
-class AddMoviePageRoute extends _i4.PageRouteInfo<void> {
-  const AddMoviePageRoute()
-      : super(
-          AddMoviePageRoute.name,
-          path: 'add_movie',
+/// [_i2.MovieDetailPage]
+class MovieDetailPageRoute extends _i4.PageRouteInfo<MovieDetailPageRouteArgs> {
+  MovieDetailPageRoute({
+    _i5.Key? key,
+    _i6.Movie? movie,
+    required dynamic Function(
+      String,
+      String,
+      String,
+      List<_i6.Genres>,
+    )
+        addMovie,
+  }) : super(
+          MovieDetailPageRoute.name,
+          path: 'add_movie/:movie',
+          args: MovieDetailPageRouteArgs(
+            key: key,
+            movie: movie,
+            addMovie: addMovie,
+          ),
+          rawQueryParams: {'movie': movie},
         );
 
-  static const String name = 'AddMoviePageRoute';
+  static const String name = 'MovieDetailPageRoute';
+}
+
+class MovieDetailPageRouteArgs {
+  const MovieDetailPageRouteArgs({
+    this.key,
+    this.movie,
+    required this.addMovie,
+  });
+
+  final _i5.Key? key;
+
+  final _i6.Movie? movie;
+
+  final dynamic Function(
+    String,
+    String,
+    String,
+    List<_i6.Genres>,
+  ) addMovie;
+
+  @override
+  String toString() {
+    return 'MovieDetailPageRouteArgs{key: $key, movie: $movie, addMovie: $addMovie}';
+  }
 }
 
 /// generated route for

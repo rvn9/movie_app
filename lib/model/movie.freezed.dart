@@ -24,7 +24,7 @@ mixin _$Movie {
   String get title => throw _privateConstructorUsedError;
   String get director => throw _privateConstructorUsedError;
   String get sumary => throw _privateConstructorUsedError;
-  Genres get genres => throw _privateConstructorUsedError;
+  List<Genres> get genres => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -37,7 +37,11 @@ abstract class $MovieCopyWith<$Res> {
       _$MovieCopyWithImpl<$Res, Movie>;
   @useResult
   $Res call(
-      {String id, String title, String director, String sumary, Genres genres});
+      {String id,
+      String title,
+      String director,
+      String sumary,
+      List<Genres> genres});
 }
 
 /// @nodoc
@@ -79,7 +83,7 @@ class _$MovieCopyWithImpl<$Res, $Val extends Movie>
       genres: null == genres
           ? _value.genres
           : genres // ignore: cast_nullable_to_non_nullable
-              as Genres,
+              as List<Genres>,
     ) as $Val);
   }
 }
@@ -91,7 +95,11 @@ abstract class _$$_MovieCopyWith<$Res> implements $MovieCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String id, String title, String director, String sumary, Genres genres});
+      {String id,
+      String title,
+      String director,
+      String sumary,
+      List<Genres> genres});
 }
 
 /// @nodoc
@@ -127,9 +135,9 @@ class __$$_MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res, _$_Movie>
           : sumary // ignore: cast_nullable_to_non_nullable
               as String,
       genres: null == genres
-          ? _value.genres
+          ? _value._genres
           : genres // ignore: cast_nullable_to_non_nullable
-              as Genres,
+              as List<Genres>,
     ));
   }
 }
@@ -142,7 +150,8 @@ class _$_Movie implements _Movie {
       required this.title,
       required this.director,
       required this.sumary,
-      required this.genres});
+      required final List<Genres> genres})
+      : _genres = genres;
 
   factory _$_Movie.fromJson(Map<String, dynamic> json) =>
       _$$_MovieFromJson(json);
@@ -155,8 +164,13 @@ class _$_Movie implements _Movie {
   final String director;
   @override
   final String sumary;
+  final List<Genres> _genres;
   @override
-  final Genres genres;
+  List<Genres> get genres {
+    if (_genres is EqualUnmodifiableListView) return _genres;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_genres);
+  }
 
   @override
   String toString() {
@@ -173,13 +187,13 @@ class _$_Movie implements _Movie {
             (identical(other.director, director) ||
                 other.director == director) &&
             (identical(other.sumary, sumary) || other.sumary == sumary) &&
-            (identical(other.genres, genres) || other.genres == genres));
+            const DeepCollectionEquality().equals(other._genres, _genres));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, director, sumary, genres);
+  int get hashCode => Object.hash(runtimeType, id, title, director, sumary,
+      const DeepCollectionEquality().hash(_genres));
 
   @JsonKey(ignore: true)
   @override
@@ -201,7 +215,7 @@ abstract class _Movie implements Movie {
       required final String title,
       required final String director,
       required final String sumary,
-      required final Genres genres}) = _$_Movie;
+      required final List<Genres> genres}) = _$_Movie;
 
   factory _Movie.fromJson(Map<String, dynamic> json) = _$_Movie.fromJson;
 
@@ -214,7 +228,7 @@ abstract class _Movie implements Movie {
   @override
   String get sumary;
   @override
-  Genres get genres;
+  List<Genres> get genres;
   @override
   @JsonKey(ignore: true)
   _$$_MovieCopyWith<_$_Movie> get copyWith =>

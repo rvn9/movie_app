@@ -2,11 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/empty_router_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:movie_app/mobx/movie_list.dart';
-import 'package:movie_app/pages/add_movie_page.dart';
-import 'package:movie_app/widget/card_widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
-import '../injector.dart';
+import '../mobx/movie_list.dart';
+import '../router/router.gr.dart';
+import '../widget/card_widget.dart';
+import 'movie_detail_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -20,7 +22,7 @@ class MainPage extends StatefulWidget {
         page: MainPage,
         path: '',
       ),
-      AddMoviePage.route,
+      MovieDetailPage.route,
     ],
   );
 
@@ -30,11 +32,13 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late final TextEditingController _searchController;
+  late final MovieList _movieList;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _movieList = MovieList.create(context);
   }
 
   @override
@@ -45,79 +49,195 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final movieList = MovieList.create(context);
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(249, 246, 238, 1),
       appBar: AppBar(
         title: const Text('Movie Collection'),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverPersistentHeader(
-            pinned: true,
-            floating: false,
-            delegate: Delegate(Colors.red, "test", _searchController),
-          ),
-          Observer(builder: (context) {
-            debugPrint('list movie : ' + movieList.movies.toString());
-            return SliverFillRemaining(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 3,
-                itemBuilder: (context, index) => const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: CardWidget(
-                    titleText: 'test',
-                    subtitleText: 'test2',
-                  ),
-                ),
-              ),
-            );
-          })
-        ],
+      body: Provider.value(
+        value: _movieList,
+        child: CustomScrollView(
+          slivers: [
+            SliverPersistentHeader(
+              pinned: true,
+              floating: false,
+              delegate: SearchField(_searchController),
+            ),
+            Observer(
+                warnWhenNoObservables: true,
+                builder: (context) {
+                  final movies = _movieList.isSearching
+                      ? _movieList.searchMovies
+                      : _movieList.movies;
+                  return SliverFillRemaining(
+                    child: ScrollConfiguration(
+                      behavior: const MaterialScrollBehavior()
+                          .copyWith(overscroll: false),
+                      child: ListView.builder(
+                        itemCount: movies.length,
+                        itemBuilder: (context, index) {
+                          final movie = movies[index];
+                          return GestureDetector(
+                            onTap: () {
+                              AutoRouter.of(context).push(MovieDetailPageRoute(
+                                movie: movie,
+                                addMovie:
+                                    (title, director, summary, genres) async {
+                                  context.read<MovieList>().updateMovie(
+                                        index: index,
+                                        title: title,
+                                        director: director,
+                                        summary: summary,
+                                        genres: genres,
+                                      );
+                                  await Fluttertoast.showToast(
+                                    msg: 'Success updating movie',
+                                    toastLength: Toast.LENGTH_LONG,
+                                  );
+                                  if (mounted) AutoRouter.of(context).pop();
+                                },
+                              ));
+                              FocusScope.of(context).unfocus();
+                            },
+                            child: Dismissible(
+                              key: Key(movie.id),
+                              direction: DismissDirection.endToStart,
+                              background: Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: Card(
+                                    margin: EdgeInsets.zero,
+                                    elevation: 2.0,
+                                    color: Colors.red,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      side: const BorderSide(
+                                          color: Color(0xffe1e3e6), width: 1.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                            size: 48,
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                              ),
+                              onDismissed: (direction) {
+                                if (direction == DismissDirection.endToStart) {
+                                  context
+                                      .read<MovieList>()
+                                      .removeMovie(movie.id);
+                                }
+                              },
+                              confirmDismiss: (direction) async {
+                                if (direction == DismissDirection.endToStart) {
+                                  return await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Confirm"),
+                                        content: const Text(
+                                            "Are you sure you wish to delete this movie?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () =>
+                                                AutoRouter.of(context)
+                                                    .pop(true),
+                                            child: const Text("DELETE"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                AutoRouter.of(context)
+                                                    .pop(false),
+                                            child: const Text("CANCEL"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: CardWidget(
+                                  titleText: movie.title,
+                                  subtitleText: movie.director,
+                                  genres: movie.genres,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                })
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here!
+          AutoRouter.of(context).push(
+            MovieDetailPageRoute(
+              addMovie: (title, director, summary, genres) async {
+                _movieList.addMovie(
+                  title: title,
+                  director: director,
+                  summary: summary,
+                  genres: genres,
+                );
+                await Fluttertoast.showToast(
+                  msg: 'Success adding new movie',
+                  toastLength: Toast.LENGTH_LONG,
+                );
+                if (mounted) AutoRouter.of(context).pop();
+              },
+            ),
+          );
+          FocusScope.of(context).unfocus();
         },
         backgroundColor: Colors.green,
-        child: const Icon(Icons.navigation),
+        child: const Icon(Icons.add_rounded),
       ),
     );
   }
 }
 
-class Delegate extends SliverPersistentHeaderDelegate {
-  final Color backgroundColor;
-  final String headerTitle;
+class SearchField extends SliverPersistentHeaderDelegate {
   final TextEditingController _searchController;
 
-  Delegate(this.backgroundColor, this.headerTitle, this._searchController);
+  SearchField(this._searchController);
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: const Color.fromRGBO(249, 246, 238, 1),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: TextField(
-            maxLines: 1,
-            controller: _searchController,
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.search_outlined),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              hintText: 'Find movie by title',
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: TextField(
+          maxLines: 1,
+          controller: _searchController,
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.search_outlined),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
             ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            hintText: 'Find movie by title',
           ),
+          onChanged: (value) {
+            context.read<MovieList>().searchMovie(value);
+          },
         ),
       ),
     );

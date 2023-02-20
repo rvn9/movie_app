@@ -11,7 +11,9 @@ _$_Movie _$$_MovieFromJson(Map<String, dynamic> json) => _$_Movie(
       title: json['title'] as String,
       director: json['director'] as String,
       sumary: json['sumary'] as String,
-      genres: $enumDecode(_$GenresEnumMap, json['genres']),
+      genres: (json['genres'] as List<dynamic>)
+          .map((e) => $enumDecode(_$GenresEnumMap, e))
+          .toList(),
     );
 
 Map<String, dynamic> _$$_MovieToJson(_$_Movie instance) => <String, dynamic>{
@@ -19,7 +21,7 @@ Map<String, dynamic> _$$_MovieToJson(_$_Movie instance) => <String, dynamic>{
       'title': instance.title,
       'director': instance.director,
       'sumary': instance.sumary,
-      'genres': _$GenresEnumMap[instance.genres]!,
+      'genres': instance.genres.map((e) => _$GenresEnumMap[e]!).toList(),
     };
 
 const _$GenresEnumMap = {
