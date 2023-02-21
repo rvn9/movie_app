@@ -166,8 +166,9 @@ class _MainPageState extends State<MainPage> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 16),
                                 child: CardWidget(
-                                  titleText: movie.title,
-                                  subtitleText: movie.director,
+                                  title: movie.title,
+                                  director: movie.director,
+                                  summary: movie.sumary,
                                   genres: movie.genres,
                                 ),
                               ),
@@ -202,7 +203,7 @@ class _MainPageState extends State<MainPage> {
           );
           FocusScope.of(context).unfocus();
         },
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blue,
         child: const Icon(Icons.add_rounded),
       ),
     );

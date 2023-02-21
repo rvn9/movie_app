@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_app/widget/text_field_widget.dart';
 
 import '../model/movie.dart';
 import '../widget/chip_widget.dart';
@@ -107,68 +108,25 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   const SizedBox(
                     height: 16,
                   ),
-                  TextField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      labelText: 'Title',
-                      // Set border for enabled state (default)
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.blue),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      // Set border for focused state
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.red),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
+                  TextFieldWidget(
+                    textEditingController: _titleController,
+                    title: 'Title',
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-                  TextField(
-                    controller: _directorController,
-                    decoration: InputDecoration(
-                      labelText: 'Director',
-                      // Set border for enabled state (default)
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.blue),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      // Set border for focused state
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.red),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
+                  TextFieldWidget(
+                    textEditingController: _directorController,
+                    title: 'Director',
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-                  TextField(
-                    controller: _summaryController,
-                    maxLength: 100,
+                  TextFieldWidget(
                     maxLines: 3,
-                    decoration: InputDecoration(
-                      labelText: 'Summary',
-
-                      // Set border for enabled state (default)
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.blue),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      // Set border for focused state
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.red),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
+                    maxLength: 100,
+                    textEditingController: _summaryController,
+                    title: 'Summary',
                   ),
                   const SizedBox(
                     height: 16,

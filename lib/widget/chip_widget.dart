@@ -9,12 +9,14 @@ class IconChipWidget extends StatelessWidget {
     this.iconPath,
     this.labelColor = const Color(0xff4e73f8),
     this.backgroundColor = const Color(0x144e73f8),
+    this.fontSize = 16,
   }) : super(key: key);
 
   final String label;
   final IconData? icon;
   final String? iconPath;
   final Color labelColor;
+  final double? fontSize;
   final Color backgroundColor;
 
   @override
@@ -50,7 +52,7 @@ class IconChipWidget extends StatelessWidget {
               const SizedBox.shrink(),
             Text(
               label,
-              style: TextStyle(color: labelColor, fontSize: 16.sp),
+              style: TextStyle(color: labelColor, fontSize: fontSize?.sp),
             ),
           ],
         ),

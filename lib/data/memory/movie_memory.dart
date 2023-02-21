@@ -9,21 +9,24 @@ class MovieMemory {
       id: const Uuid().v4(),
       title: 'Titanic',
       director: 'James Titanic',
-      sumary: 'Kapal tenggelam',
-      genres: [Genres.drama],
+      sumary:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam enim lectus, pharetra vulputate dapibus',
+      genres: [Genres.drama, Genres.action, Genres.animation],
     ),
     Movie(
       id: const Uuid().v4(),
       title: 'Avengers',
       director: 'Avenge Sevenfold',
-      sumary: 'Petualangan melawan monster',
+      sumary:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam enim lectus, pharetra vulputate dapibus',
       genres: [Genres.action],
     ),
     Movie(
       id: const Uuid().v4(),
       title: 'Scary Movie ',
       director: 'James Scary',
-      sumary: 'Scarry banget bossss',
+      sumary:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam enim lectus, pharetra vulputate dapibus',
       genres: [Genres.horror],
     )
   ]);
@@ -37,7 +40,7 @@ class MovieMemory {
   ObservableList<Movie> get searchMovies => _searchMovies;
 
   void add(Movie movie) {
-    _movies.add(movie);
+    _movies.insert(0, movie);
   }
 
   void update(String id, Movie movie) {
